@@ -8,16 +8,16 @@ const verifyReqBody = (body) => {
 		switch (key) {
 			case "passport":
 				if (!verifyPassport(body.passport)) {
-					return false;
+					return undefined;
 				}
 				break;
 			case "cash":
-				if (!verifyCash(body.cash)) {
+				if (!verifyAmount(body.cash)) {
 					body.cash = 0;
 				}
 				break;
 			case "credit":
-				if (!verifyCredit(body.credit)) {
+				if (!verifyAmount(body.credit)) {
 					body.credit = 0;
 				}
 				break;
@@ -32,9 +32,24 @@ const verifyReqBody = (body) => {
 
 
 const verifyPassport = (id) => {
-	if (id < 1) {
+	if (id.length < 1 || Number(id) < 1) {
 		return false;
 	}
 
 	return true;
+}
+
+const verifyAmount = (amount) => {
+	if (typeof(amount) !== "number" || amount < 0) {
+		return false;
+	}
+
+	return true;
+}
+
+
+module.exports = {
+	verifyReqBody: verifyReqBody,
+	verifyPassport: verifyPassport,
+	verifyAmount: verifyAmount
 }

@@ -1,5 +1,13 @@
 const fs = require ('fs');
 
+const  {
+	verifyReqBody,
+	verifyPassport,
+	verifyAmount
+
+} = require ('./utils.js');
+
+
 const addClient = () => {
 
 }
@@ -25,16 +33,22 @@ const transferMoney = () => {
 }
 
 
-const getUserById = () => {
+const getClientById = () => {
 
 }
 
 
-const getAllUsers = () => {
-
+const getAllClients = () => {
+	try {
+		console.log("enters getAllClients");
+		return (
+			JSON.parse(fs.readFileSync("DataBase/clientsData.json").toString())
+		);
+	} catch (error) {
+		console.error(error);
+		return [];
+	}
 }
-
-
 
 
 
@@ -44,6 +58,6 @@ module.exports = {
 	withdrawCash: withdrawCash,
 	updateCredit: updateCredit,
 	transferMoney: transferMoney,
-	getUserById: getUserById,
-	getAllUsers: getAllUsers
+	getClientById: getClientById,
+	getAllClients: getAllClients
 }	
