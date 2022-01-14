@@ -39,7 +39,13 @@ app.get('/clients', (req, res) => {
 });
 
 app.get('/clients/:id', (req, res) => {
-	res.send(getClientById(req.params.id));
+	const client = getClientById(req.params.id);
+	if (typeof(client) === "object") {
+		res.send(client);
+	}
+	else {
+		res.status(404).send(client);
+	}
 });
 
 app.listen(port, () => {console.log("Listening on port: ", port)});

@@ -1,4 +1,5 @@
 const fs = require ('fs');
+const { get } = require('http');
 
 const  {
 	verifyReqBody,
@@ -33,8 +34,16 @@ const transferMoney = () => {
 }
 
 
-const getClientById = () => {
-
+const getClientById = (id) => {
+	try {
+		const clients = getAllClients();
+		const client = clients.find((client) => {
+			return id === client.id
+		})
+	} catch (error) {
+		console.error(error);
+		return "Client not found";
+	}
 }
 
 

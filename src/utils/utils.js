@@ -10,6 +10,7 @@ const verifyReqBody = (body) => {
 				if (!verifyPassport(body.passport)) {
 					return undefined;
 				}
+				body.passport = String(body.passport);
 				break;
 			case "cash":
 				if (!verifyAmount(body.cash)) {
