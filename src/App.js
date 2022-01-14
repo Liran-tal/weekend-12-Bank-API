@@ -24,28 +24,59 @@ app.use(express.json());
 
 const port = 8080;
 
+
+// addClient
 app.post('/clients', (req, res) => {
+	console.log(req.body);
+	
 	const newClient = verifyReqBody(req.body);
+	
 	if (newClient) {
-		res.send(JSON(addClient(newClient)));
+		const client = res.send(JSON.stringify(addClient(newClient)));
+		if (client === 400) {
+			res.status(400).send("Client already exist");
+		}
+		else if (client === 500) {
+			res.status(500).send("Could not complete adding new client");
+		}
+		else {
+			res.send(client);
+		}
 	}
 	else {
-		res.status(400).send(JSON('Error: Invalid client details'));
+		res.status(400).send('Error: Invalid client details');
 	}
 });
 
+
+// getAllClients
 app.get('/clients', (req, res) => {
 	res.send(getAllClients());
 });
 
+
+// getClientById
 app.get('/clients/:id', (req, res) => {
+	if (!verifyPassport(req.params.id)) {
+		res.status(400).send('Error: Invalid client passport Id');
+		return;
+	}
+
 	const client = getClientById(req.params.id);
-	if (typeof(client) === "object") {
-		res.send(client);
+	if (client === 404) {
+		res.status(404).send("Client not found");
+	}
+	else if (client === 500) {
+		res.status(500).send("Server could not retrieve from data base");
 	}
 	else {
-		res.status(404).send(client);
+		res.send(client);
 	}
 });
+
+
+// 
+
+
 
 app.listen(port, () => {console.log("Listening on port: ", port)});

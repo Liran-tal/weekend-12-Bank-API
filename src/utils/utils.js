@@ -33,7 +33,7 @@ const verifyReqBody = (body) => {
 
 
 const verifyPassport = (id) => {
-	if (id.length < 1 || Number(id) < 1) {
+ 	if (id.length < 1 || !String(id).match(/^[1-9]\d*$/)) {
 		return false;
 	}
 
