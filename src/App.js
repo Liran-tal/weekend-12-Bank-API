@@ -150,6 +150,35 @@ app.put('/clients/:id/transfer', (req, res) => {
 });
 
 
+//updateCredit
+app.put('/clients/:id/credit', (req, res) => {
+	let client;
+	let message = "";
+	if (!verifyId(req.params.id)) {
+		message = "Invalid client Id";
+	}
+	if (!verifyAmount(req.body.amount)) {
+		message = "Invalid amount number";
+	}	
+	if (message) {
+		sendError(res, 400, message);
+		return;
+	}
+
+	client = updateCredit(req.params.id, req.body.amount, res);
+
+	// if (client === 404) {
+	// 	sendError(res, 404, "Client not found");
+	// }
+	// else if (client === 500) {
+	// 	sendError(res, 500, "Server could not retrieve from data base");
+	// }
+	// else {
+	// 	res.send(client);
+	// }
+});
+
+
 // 
 const sendError = (res, status, message) => {
 	res.status(status).send(message);

@@ -78,8 +78,27 @@ const updateCash = (id, amount, isDeposit) => {
 }
 
 
-const updateCredit = () => {
+const updateCredit = async (id, amount, res) => {
+	try {
+		const clients = getAllClients();
+		const clientIndex = getClientIndex ("id", id, clients);
+		if (clientIndex < 0) {
+			res.status(404).send("Client not found");
+			return
+		}
+	
+		const editedClient = {
+			...clients[clientIndex], 
+			credit: amount,
+		}
 
+		editClientsData(clientIndex, editedClient, clients);
+		res.status(200).send(editedClient);
+	} catch (error) {
+		// console.error(error);
+		// return 500;
+		res.status(500).send("Server could not retrieve from data base")
+	}
 }
 
 
