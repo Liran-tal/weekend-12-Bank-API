@@ -75,9 +75,6 @@ app.get('/clients/:id', (req, res) => {
 
 // updateCash
 app.put('/clients/:id/cash/:operation', (req, res) => {
-	console.log("updateCash, body: ", req.body);
-	console.log("updateCash, params: ", req.params);
-	console.log("updateCash, params: ", req.params.operation);
 	let client;
 	let message = "";
 	if (!verifyId(req.params.id)) {
@@ -101,11 +98,51 @@ app.put('/clients/:id/cash/:operation', (req, res) => {
 	else {
 		client = updateCash(req.params.id, req.body.amount, false);
 	}
+
 	if (client === 404) {
 		sendError(res, 404, "Client not found");
 	}
 	else if (client === 500) {
 		sendError(res, 500, "Server could not retrieve from data base");
+	}
+	else if (client === 400) {
+		sendError(res, 400, "Client credit not big enough");
+	}
+	else {
+		res.send(client);
+	}
+});
+
+
+// transferMoney
+app.put('/clients/:id/transfer', (req, res) => {
+	let client;
+	let message = "";
+	if (!verifyId(req.params.id)) {
+		message = "Invalid client Id";
+	}
+	if (!verifyId(req.body.targetId)) {
+		message = "Invalid target Id";
+	}
+	if (!verifyAmount(req.body.amount)) {
+		message = "Invalid amount number";
+	}	
+	
+	if (message) {
+		sendError(res, 400, message);
+		return;
+	}
+
+	client = transferMoney(req.params.id, req.body.targetId, req.body.amount);
+
+	if (client === 404) {
+		sendError(res, 404, "Id not found. Tip: confirm Id as String");
+	}
+	else if (client === 500) {
+		sendError(res, 500, "Server could not retrieve from data base");
+	}
+	else if (client === 400) {
+		sendError(res, 400, "Client credit not big enough");
 	}
 	else {
 		res.send(client);

@@ -60,6 +60,10 @@ const updateCash = (id, amount, isDeposit) => {
 			? clients[clientIndex].cash + amount
 			: clients[clientIndex].cash - amount;
 
+		if (newAmount + clients[clientIndex].credit < 0) {
+			return 400
+		}
+
 		const editedClient = {
 			...clients[clientIndex], 
 			cash: newAmount,
@@ -79,8 +83,43 @@ const updateCredit = () => {
 }
 
 
-const transferMoney = () => {
+const transferMoney = (clientId, targetId, amount) => {
+	try {
+		const clients = getAllClients();
+		const clientIndex = getClientIndex ("id", clientId, clients);
+		if (clientIndex < 0) {
+			return 404;
+		}
+		const targetIndex = getClientIndex ("id", targetId, clients);
+		if (targetIndex < 0) {
+			return 404;
+		}
 
+		const newClientAmount = clients[clientIndex].cash - amount;
+
+		if (newClientAmount + clients[clientIndex].credit < 0) {
+			return 400
+		}
+
+		const newTargetAmount = clients[targetIndex].cash + amount;
+
+		const editedClient = {
+			...clients[clientIndex], 
+			cash: newClientAmount,
+		}
+		const editedTarget = {
+			...clients[targetIndex], 
+			cash: newTargetAmount,
+		}
+
+		clients.splice(clientIndex, 1, editedClient);
+		clients.splice(targetIndex, 1, editedTarget);
+		setAllClients (clients);
+		return {editedClient, editedTarget};
+	} catch (error) {
+		console.error(error);
+		return 500;
+	}
 }
 
 

@@ -30,7 +30,7 @@ const verifyReqBody = (body) => {
 
 
 const verifyId = (id) => {
- 	if (id.length < 1 || !String(id).match(/^[1-9]\d*$/)) {
+ 	if (!id || id.length < 1 || !String(id).match(/^[1-9]\d*$/)) {
 		return false;
 	}
 
