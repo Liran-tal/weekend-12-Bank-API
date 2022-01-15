@@ -12,14 +12,16 @@ const clientsDBPath = "DataBase/clientsData.json";
 
 
 const addClient = (newClient) => {
+	
 	const clients = getAllClients();
-	if (isClient ("id", newClient.passport, clients)) {
+	if (getClientIndex ("id", newClient.id, clients) > -1) {
 		return 400;
 	}
 
 	clients.push(newClient);
 	try {
 		setAllClients(clients);
+		return newClient;
 	} catch (error) {
 		return 500;
 	}
@@ -28,7 +30,7 @@ const addClient = (newClient) => {
 // const addClient = (newClient, res) => {
 // 	console.log(res);
 // 	const clients = getAllClients();
-// 	if (isClient ("id", newClient.passport, clients)) {
+// 	if (getClientIndex ("id", newClient.id, clients) < 0) {
 // 		// return 400;
 // 		res.status(400).send("Client already exist");
 // 	}
@@ -46,8 +48,24 @@ const addClient = (newClient) => {
 // }
 
 
-const depositCash = () => {
+const depositCash = (id, amount) => {
+	try {
+		const clients = getAllClients();
+		const clientIndex = getClientIndex ("id", id, clients);
+		if (clientIndex < 0) {
+			return 404;
+		}
+		const editedClient = {
+			...clients[clientIndex], 
+			cash: clients[clientIndex].cash + amount,
+		}
 
+		editClientsData(clientIndex, editedClient, clients);
+		return editedClient;
+	} catch (error) {
+		console.error(error);
+		return 500;
+	}
 }
 
 
@@ -69,13 +87,13 @@ const transferMoney = () => {
 const getClientById = (id) => {
 	try {
 		const clients = getAllClients();
-		const client = isClient ("id", id, clients);
+		const clientIndex = getClientIndex ("id", id, clients);
 		
-		if (!client) {
+		if (clientIndex < 0) {
 			return 404;
 		}
 
-		return client;
+		return clients[clientIndex];
 	} catch (error) {
 		console.error(error);
 		return 500;
@@ -94,21 +112,27 @@ const getAllClients = () => {
  
 const setAllClients = (clients) => {
 	try {
-		fs.writeFileSync(clientsDBPath, JSON.stringify(clients), (error) => {
-			if (error) {
-				console.error(error);
-				throw	error
-			}
-		})
+		fs.writeFileSync(clientsDBPath, JSON.stringify(clients)
+		// , (error) => {
+		// 	if (error) {
+		// 		console.error(error);
+		// 		throw	error
+		// 	}}
+		)
 	} catch (error) {
 		throw error;
 	}
 }
 
-const isClient = (key, value, dataArray) => {
-	const client = dataArray.find((item) => {
+const getClientIndex = (key, value, dataArray) => {
+	return dataArray.findIndex((item) => {
 		return value === item[key];
 	})
+}
+
+const editClientsData = (index, value, dataArray) => {
+	dataArray.splice(index, 1, value);
+	return setAllClients (dataArray);
 }
 
 module.exports = {

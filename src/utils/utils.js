@@ -1,16 +1,13 @@
 
 
 const verifyReqBody = (body) => {
-
-	let res = true;
-
 	for (const key in body) {
 		switch (key) {
-			case "passport":
-				if (!verifyPassport(body.passport)) {
+			case "id":
+				if (!verifyId(body.id)) {
 					return undefined;
 				}
-				body.passport = String(body.passport);
+				body.id = String(body.id);
 				break;
 			case "cash":
 				if (!verifyAmount(body.cash)) {
@@ -32,7 +29,7 @@ const verifyReqBody = (body) => {
 }
 
 
-const verifyPassport = (id) => {
+const verifyId = (id) => {
  	if (id.length < 1 || !String(id).match(/^[1-9]\d*$/)) {
 		return false;
 	}
@@ -51,6 +48,6 @@ const verifyAmount = (amount) => {
 
 module.exports = {
 	verifyReqBody: verifyReqBody,
-	verifyPassport: verifyPassport,
+	verifyId: verifyId,
 	verifyAmount: verifyAmount
 }
