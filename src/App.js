@@ -2,14 +2,14 @@ const express = require('../node_modules/express');
 
 const  {
 	verifyReqBody,
-	verifyPassport,
+	verifyId,
 	verifyAmount
 
 } = require ('./utils/utils.js');
 
 const {
 	addClient,
-	depositCash,
+	updateCash,
 	withdrawCash,
 	updateCredit,
 	transferMoney,
@@ -55,7 +55,7 @@ app.get('/clients', (req, res) => {
 
 // getClientById
 app.get('/clients/:id', (req, res) => {
-	if (!verifyPassport(req.params.id)) {
+	if (!verifyId(req.params.id)) {
 		res.status(400).send('Error: Invalid client Id');
 		return;
 	}
@@ -73,20 +73,34 @@ app.get('/clients/:id', (req, res) => {
 });
 
 
-// depositCash
-app.put('/clients/:id/deposit', (req, res) => {
-	console.log("depositCash: ", req.body);
-	console.log("depositCash: ", req.params);
-	if (!verifyPassport(req.params.id)) {
-		sendError(res, 400, 'Error: Invalid client Id');
-		return;
+// updateCash
+app.put('/clients/:id/cash/:operation', (req, res) => {
+	console.log("updateCash, body: ", req.body);
+	console.log("updateCash, params: ", req.params);
+	console.log("updateCash, params: ", req.params.operation);
+	let client;
+	let message = "";
+	if (!verifyId(req.params.id)) {
+		message = "Invalid client Id";
 	}
 	if (!verifyAmount(req.body.amount)) {
-		sendError(res, 400, 'Error: Invalid amount');
+		message = "Invalid amount number";
+	}	
+	if (req.params.operation !== "deposit" 
+			&& req.params.operation !== "withdraw") {
+		message = "Invalid operation for \"Cash\"";
+	}	
+	if (message) {
+		sendError(res, 400, message);
 		return;
 	}
 
-	const client = depositCash(req.params.id, req.body.amount);
+	if (req.query.operation === "deposit") {
+		client = updateCash(req.params.id, req.body.amount, true);
+	}
+	else {
+		client = updateCash(req.params.id, req.body.amount, false);
+	}
 	if (client === 404) {
 		sendError(res, 404, "Client not found");
 	}

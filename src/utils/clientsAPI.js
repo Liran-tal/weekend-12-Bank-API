@@ -48,16 +48,21 @@ const addClient = (newClient) => {
 // }
 
 
-const depositCash = (id, amount) => {
+const updateCash = (id, amount, isDeposit) => {
 	try {
 		const clients = getAllClients();
 		const clientIndex = getClientIndex ("id", id, clients);
 		if (clientIndex < 0) {
 			return 404;
 		}
+
+		const newAmount = isDeposit 
+			? clients[clientIndex].cash + amount
+			: clients[clientIndex].cash - amount;
+
 		const editedClient = {
 			...clients[clientIndex], 
-			cash: clients[clientIndex].cash + amount,
+			cash: newAmount,
 		}
 
 		editClientsData(clientIndex, editedClient, clients);
@@ -66,11 +71,6 @@ const depositCash = (id, amount) => {
 		console.error(error);
 		return 500;
 	}
-}
-
-
-const withdrawCash = () => {
-
 }
 
 
@@ -137,8 +137,7 @@ const editClientsData = (index, value, dataArray) => {
 
 module.exports = {
 	addClient: addClient,
-	depositCash: depositCash,
-	withdrawCash: withdrawCash,
+	updateCash: updateCash,
 	updateCredit: updateCredit,
 	transferMoney: transferMoney,
 	getClientById: getClientById,
