@@ -1,4 +1,6 @@
 const express = require('../node_modules/express');
+const cors = require('../node_modules/cors');
+
 
 const  {
 	verifyReqBody,
@@ -21,6 +23,7 @@ const {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const port = 8080;
 
