@@ -27,6 +27,9 @@ app.use(cors());
 
 const port = process.env.PORT || 8080;
 
+app.get('/', (req, res) => {
+	res.send("OK");
+})
 
 // addClient
 app.post('/clients', (req, res) => {
