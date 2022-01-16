@@ -1,6 +1,6 @@
 const express = require('../node_modules/express');
 const cors = require('../node_modules/cors');
-
+require('../node_modules/dotenv').config();
 
 const  {
 	verifyReqBody,
@@ -25,7 +25,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 
 // addClient
