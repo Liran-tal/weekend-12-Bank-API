@@ -1,31 +1,33 @@
-const express = require('../node_modules/express');
-const cors = require('../node_modules/cors');
-require('../node_modules/dotenv').config();
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const clientsRoutes = require('./routes/clientsRoutes.js');
+
+const PORT = process.env.PORT || 8080;
+const app = express();
+
+app.use(express.json());
+app.use(cors());
+
 
 const  {
 	verifyReqBody,
 	verifyId,
 	verifyAmount
 
-} = require ('./utils/utils.js');
+} = require ('../utils/utils.js');
 
 const {
 	addClient,
 	updateCash,
-	withdrawCash,
 	updateCredit,
 	transferMoney,
 	getClientById,
 	getAllClients
 
-} = require ('./utils/clientsAPI.js');
+} = require ('../utils/clientsAPI.js.js');
 
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
-const port = process.env.PORT || 8080;
 
 app.get('/', (req, res) => {
 	res.send("OK");
@@ -190,5 +192,6 @@ const sendError = (res, status, message) => {
 	res.status(status).send(message);
 }
 
+app.use('/clients', clientsRoutes);
 
-app.listen(port, () => {console.log("Listening on port: ", port)});
+app.listen(PORT, () => {console.log("Listening on port: ", PORT)});
